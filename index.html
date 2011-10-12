@@ -1,0 +1,183 @@
+<html>
+	<head>
+		<title>Random Dungeon</title>
+		<link rel="stylesheet" type="text/css" href="style.css" />
+	</head>
+	<body>
+		<div id="tools">
+			<form>
+				<dl>
+					<dt>Size X</dt>
+					<dd>
+						<select name="sizeX">
+							<option value="20">20</option>
+							<option value="30">30</option>
+							<option value="40">40</option>
+							<option value="50">50</option>
+							<option value="60">60</option>
+							<option value="70">70</option>
+						</select>
+					</dd>
+					<dt>Size Y</dt>
+					<dd>
+						<select name="sizeY">
+							<option value="20">20</option>
+							<option value="30">30</option>
+							<option value="40">40</option>
+							<option value="50">50</option>
+							<option value="60">60</option>
+							<option value="70">70</option>
+						</select>
+					</dd>
+					<dt>Room Count</dt>
+					<dd>
+						<select name="roomCount">
+							<option value="3">3</option>
+							<option value="4">4</option>
+							<option value="5">5</option>
+							<option value="6">6</option>
+							<option value="7">7</option>
+							<option value="8">8</option>
+							<option value="9">9</option>
+							<option value="10">10</option>
+							<option value="15">15</option>
+							<option value="20">20</option>
+							<option value="25">25</option>
+							<option value="30">30</option>
+							<option value="35">35</option>
+							<option value="40">40</option>
+							<option value="45">45</option>
+							<option value="50">50</option>
+						</select>
+					</dd>
+					<dt>Room Min X</dt>
+					<dd>
+						<select name="roomMinX">
+							<option value="3">3</option>
+							<option value="4">4</option>
+							<option value="5">5</option>
+						</select>
+					</dd>
+					<dt>Room Min Y</dt>
+					<dd>
+						<select name="roomMinY">
+							<option value="3">3</option>
+							<option value="4">4</option>
+							<option value="5">5</option>
+						</select>
+					</dd>
+					<dt>Room Max X</dt>
+					<dd>
+						<select name="roomMaxX">
+							<option value="5">5</option>
+							<option value="6">6</option>
+							<option value="7">7</option>
+							<option value="8">8</option>
+							<option value="9">9</option>
+						</select>
+					</dd>
+					<dt>Room Max Y</dt>
+					<dd>
+						<select name="roomMaxY">
+							<option value="5">5</option>
+							<option value="6">6</option>
+							<option value="7">7</option>
+							<option value="8">8</option>
+							<option value="9">9</option>
+						</select>
+					</dd>
+					<dt>Keys</dt>
+					<dd>
+						<select name="keys">
+							<option value="0">None</option>
+							<option value="1">1</option>
+							<option value="2">2</option>
+							<option value="3">3</option>
+							<option value="4">4</option>
+							<option value="5">5</option>
+							<option value="6">6</option>
+							<option value="7">7</option>
+							<option value="8">8</option>
+							<option value="9">9</option>
+							<option value="10">10</option>
+							<option value="15">15</option>
+							<option value="20">20</option>
+							<option value="25">25</option>
+						</select>
+					</dd>
+					<dt>Number of Tries</dt>
+					<dd>
+						<select name="tries">
+							<option value="5">5</option>
+							<option value="10">10</option>
+							<option value="20">20</option>
+							<option value="100" selected>100</option>
+						</select>
+					</dd>
+				</dl>
+
+				<input type="button" value="Generate" onclick="generateDungeon();" />
+			</form>
+		</div>
+		<div id="output"></div>
+	</body>
+	<script type="text/javascript" src="astar.js"></script>
+	<script type="text/javascript" src="dungeon.js"></script>
+	<script type="text/javascript">
+
+		var dungeon = new Dungeon;
+
+		function generateDungeon()
+		{
+			// its in the process, just wait a bit :P
+			if ( !dungeon.done && dungeon.working )
+				return;
+			
+			var output = document.getElementById('output');
+			var form = document.getElementsByTagName('FORM')[0];
+
+			output.innerHTML = 'Generating...';
+
+			dungeon.setOptions(
+			{
+				doubled : true,
+				sizeX : getSelectedValue(form.sizeX),
+				sizeY : getSelectedValue(form.sizeY),
+				roomCount : getSelectedValue(form.roomCount),
+				roomMinX : getSelectedValue(form.roomMinX),
+				roomMinY : getSelectedValue(form.roomMinY),
+				roomMaxX : getSelectedValue(form.roomMaxX),
+				roomMaxY : getSelectedValue(form.roomMaxY),
+				keys : getSelectedValue(form.keys),
+				tries : getSelectedValue(form.tries)
+			});
+
+			dungeon.generate();
+
+			// checks on a interval to see if dungeon is complete
+			var setInt = setInterval(function()
+			{
+				if ( dungeon.done && !dungeon.working )
+				{
+					clearInterval(setInt);
+					dungeon.render('output');
+
+					// wtf!
+					var table = document.getElementById('grid');
+					table.style.width = 24 * table.getElementsByTagName('TR')[0].getElementsByTagName('TD').length;
+				}
+
+				if ( dungeon.cancelled )
+				{
+					clearInterval(setInt);
+					output.innerHTML = 'Cancelled';
+				}
+			}, 50);
+		}
+
+		function getSelectedValue(select)
+		{
+			return parseInt(select.options[select.selectedIndex].value)
+		}
+	</script>
+</html>
