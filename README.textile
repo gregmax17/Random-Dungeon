@@ -1,0 +1,7 @@
+h1. Random Dungeon
+
+Uses Javascript to generate to a random dungeon. Right now its in early beta. Only use it if yo feel comfortable with errors.
+
+h2. How to Use
+
+For now, the interface is straight forward: set the options on the left hand side and click on 'Generate'. It will then output the results, if successful.
