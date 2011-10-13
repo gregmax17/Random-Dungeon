@@ -4,7 +4,8 @@
 #tools dt { margin-top : 12px; }
 #tools dd { margin : 0; }
 
-#output { position : relative; float : left; margin-left : 18px; overflow : scroll; width : 1200px; height : 600px; border : 1px solid #ccc; }
+#output_wrapper { float : left; margin-left : 18px; }
+#output { position : relative; border : 1px solid #ccc; width : 1200px; height : 600px; overflow : scroll; }
 
 #grid { position : absolute; }
 #grid td { width : 24px; height : 24px; border : 1px solid #ddd; text-align : center; font-weight : bold; }

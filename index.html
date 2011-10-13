@@ -115,11 +115,13 @@
 						</select>
 					</dd>
 				</dl>
-
-				<input type="button" value="Generate" onclick="generateDungeon();" />
 			</form>
 		</div>
-		<div id="output"></div>
+		<div id="output_wrapper">
+			<input type="button" value="Generate" onclick="dungeonGenerate();" />
+			<input type="button" value="Cancel" onclick="dungeonCancel();" />
+			<div id="output"></div>
+		</div>
 	</body>
 	<script type="text/javascript" src="astar.js"></script>
 	<script type="text/javascript" src="dungeon.js"></script>
@@ -127,8 +129,9 @@
 
 		var dungeon = new Dungeon;
 
-		function generateDungeon()
+		function dungeonGenerate()
 		{
+			console.log(dungeon.done + ' - ' + dungeon.working);
 			// its in the process, just wait a bit :P
 			if ( !dungeon.done && dungeon.working )
 				return;
@@ -173,6 +176,11 @@
 					output.innerHTML = 'Cancelled';
 				}
 			}, 50);
+		}
+
+		function dungeonCancel()
+		{
+			dungeon.cancel();
 		}
 
 		function getSelectedValue(select)

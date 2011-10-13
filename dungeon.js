@@ -48,12 +48,15 @@ function Dungeon(opt)
 		opt = merge(opt, options)
 	}
 
+	// cancels the generator
+	this.cancel = function()
+	{
+		this.cancelled = true;
+	}
+
 	// starts the generation
 	this.generate = function()
-	{
-		if ( self.working )
-			return;
-			
+	{			
 		if ( arguments.length == 0 )
 		{
 			self.done = false;
@@ -74,36 +77,38 @@ function Dungeon(opt)
 		// loop through the functions
 		for ( var i = 0; i < ftns.length; i++ )
 		{
+			if ( self.cancelled ) break;
 			if ( !ftns[i]() ) { success = false; break; } // bummer
 			else self.percent = i / ftns.length;
 		}
-		
+
 		// lets start again, give it some time
-		if ( !success )
+		if ( !success || self.cancelled )
 		{
 			// try again?
-			if ( opt.tries > 0 )
+			if ( !self.cancelled )
 			{
-				setTimeout(function()
+				if ( opt.tries > 0 )
 				{
-					self.generate(true);
-				}, opt.restartTimer);
-			}
-			// forget it!
-			else
-			{
-				opt.tries = tries;
-				self.percent = 0;
-				self.time = 0;
-				self.done = false;
-				self.working = false;
-				self.cancelled = true;
+					setTimeout(function()
+					{
+						self.generate(true);
+					}, opt.restartTimer);
+					return;
+				}
 			}
 
+			opt.tries = tries;
+			self.percent = 0;
+			self.time = 0;
+			self.done = false;
+			self.working = false;
+			self.cancelled = true;
 			return;
 		}
 
 		// it got this far, it must be done
+		opt.tries = tries;
 		self.percent = 1;
 		self.time = $time() - started;
 		self.done = true;
@@ -384,7 +389,7 @@ function Dungeon(opt)
 		grid[rooms[0].ty][rooms[0].tx] = tile.start;
 		grid[rooms[1].ty][rooms[1].tx] = tile.end;
 
-		return rooms[0].doors.length == 1 && rooms[1].doors.length == 1;
+		return true;
 	}
 
 	function createPaths()
